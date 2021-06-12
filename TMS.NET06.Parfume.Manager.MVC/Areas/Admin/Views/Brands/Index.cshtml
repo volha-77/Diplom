@@ -1,0 +1,30 @@
+﻿@model IEnumerable<TMS.NET06.Parfume.Manager.MVC.Data.Models.Brand>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-area="Admin" asp-controller="Brands" asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr><td>@item.BrandId</td> 
+            <td>@item.Name</td>
+            <td>
+                <a asp-area="Admin" asp-action="Edit" asp-route-id="@item.BrandId">Edit</a>
+                <a asp-area="Admin" asp-action="Details" asp-route-id="@item.BrandId">Details</a>
+                <a asp-area="Admin" asp-action="Delete" asp-route-id="@item.BrandId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
