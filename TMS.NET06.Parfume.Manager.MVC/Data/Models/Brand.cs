@@ -19,7 +19,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Data.Models
 
         public string FrontImage { get; set; }
 
-        public IList<Product> Products; //mine
+        public IList<Product> Products; 
 
         public Brand()
         {

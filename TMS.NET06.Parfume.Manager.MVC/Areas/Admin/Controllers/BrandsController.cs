@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using TMS.NET06.Parfume.Manager.MVC.Data;
 using TMS.NET06.Parfume.Manager.MVC.Data.Models;
 
@@ -14,10 +14,12 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
     public class BrandsController : Controller
     {
         private readonly ParfumeShopContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public BrandsController(ParfumeShopContext context)
+        public BrandsController(ParfumeShopContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: Brands
@@ -87,12 +89,20 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Brand brand) //[Bind("BrandId")] Brand brand)
+        public async Task<IActionResult> Edit(int id, Brand brand, [Bind] IFormFile uploadLogo, [Bind] IFormFile uploadFrontImage) //[Bind("BrandId")] Brand brand)
         {
             if (id != brand.BrandId)
             {
                 return NotFound();
             }
+
+            string directoryPath = Path.Combine(_env.WebRootPath, "img", "brand-img");
+            CopyFiles(directoryPath, uploadLogo);
+            CopyFiles(directoryPath, uploadFrontImage);
+
+            string imagePathRel = "~/img/brand-img";
+            SaveImagesInModel(brand, imagePathRel, uploadLogo);
+            SaveImagesInModel(brand, imagePathRel, uploadFrontImage, false);
 
             if (ModelState.IsValid)
             {
@@ -149,6 +159,43 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         private bool BrandExists(int id)
         {
             return _context.Brands.Any(e => e.BrandId == id);
+        }
+
+        private async void CopyFiles(string directoryPath, IFormFile uploadImage)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(directoryPath);
+            if (!dirInfo.Exists)
+            {
+                dirInfo.Create();
+            }
+
+            if (uploadImage != null)
+            {
+                if (uploadImage.Length > 0)
+                {
+                    string filePath = Path.Combine(directoryPath, uploadImage.FileName);
+                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await uploadImage.CopyToAsync(fileStream);
+                    }
+                }
+            }
+
+        }
+
+        private void SaveImagesInModel(Brand brand, string imagePathRel, IFormFile uploadImage, bool isLogo = true)
+        {
+            if (uploadImage != null)
+            {
+                if (uploadImage.Length > 0)
+                {
+                    if (isLogo)
+                        brand.Logo = imagePathRel + "/" + uploadImage.FileName;
+                    else
+                        brand.FrontImage = imagePathRel + "/" + uploadImage.FileName;
+                }
+            }
+
         }
     }
 }

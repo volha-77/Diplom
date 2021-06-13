@@ -57,7 +57,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
                 var products = db.Products.Where(p => p.BrandId == brand.BrandId).OrderBy(p => p.Price).ToList();
                 if (products.Count > 0)
                 homeBlockViewModel.PriceFrom = products[0].Price;
-                homeBlockViewModel.ImageUrl = "~/img/bg-img/" + brand.BrandId.ToString() + ".jpg";
+                homeBlockViewModel.ImageUrl = brand.FrontImage ?? brand.Logo;
                 homeBlockViewModel.PageUrl = "/";
                 homeViewModel.HomeBlocks.Add(homeBlockViewModel);
             }

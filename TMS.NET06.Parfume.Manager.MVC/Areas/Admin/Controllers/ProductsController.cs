@@ -106,11 +106,11 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
 
             string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", id.ToString());
             CopyFiles(directoryPath, uploadImages);
-            
+
             string directoryPathSmall = Path.Combine(directoryPath, "small");
             CopyFiles(directoryPathSmall, uploadImagesSmall);
 
-           
+
             string imagePathRel = String.Concat("~/img/prod-img/", id.ToString());
             SaveImagesInModel(product.Images, imagePathRel, uploadImages);
 
@@ -178,19 +178,23 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
 
         private async void CopyFiles(string directoryPath, IList<IFormFile> uploadImages)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(directoryPath);
-            if (!dirInfo.Exists)
+            if (uploadImages != null)
             {
-                dirInfo.Create();
-            }
-            foreach (IFormFile file in uploadImages)
-            {
-                if (file.Length > 0)
+                DirectoryInfo dirInfo = new DirectoryInfo(directoryPath);
+                if (!dirInfo.Exists)
                 {
-                    string filePath = Path.Combine(directoryPath, file.FileName);
-                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                    dirInfo.Create();
+                }
+
+                foreach (IFormFile file in uploadImages)
+                {
+                    if (file.Length > 0)
                     {
-                        await file.CopyToAsync(fileStream);
+                        string filePath = Path.Combine(directoryPath, file.FileName);
+                        using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
                     }
                 }
             }
@@ -198,15 +202,17 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
 
         private void SaveImagesInModel(List<string> imageListOfProduct, string imagePathRel, IList<IFormFile> uploadImages)
         {
-           // imageListOfProduct.Clear();
+            // imageListOfProduct.Clear();
 
-
-            foreach (IFormFile file in uploadImages)
+            if (uploadImages != null)
             {
-                if (file.Length > 0)
+                foreach (IFormFile file in uploadImages)
                 {
-                    imageListOfProduct.Add(imagePathRel + "/" + file.FileName);
-                  
+                    if (file.Length > 0)
+                    {
+                        imageListOfProduct.Add(imagePathRel + "/" + file.FileName);
+
+                    }
                 }
             }
         }
