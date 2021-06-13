@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,12 +18,6 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
     {
         private readonly ParfumeShopContext _context;
         private readonly IWebHostEnvironment _env;
-
-        //public ProductsController(IWebHostEnvironment env, ParfumeShopContext context)
-        //{
-        //    _context = context;
-        //    _env = env;
-        //}
 
         public ProductsController(ParfumeShopContext context, IWebHostEnvironment env)
         {
@@ -111,41 +106,16 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
 
             string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", id.ToString());
             CopyFiles(directoryPath, uploadImages);
-            //DirectoryInfo dirInfo = new DirectoryInfo(directoryPath);
-            //if (!dirInfo.Exists)
-            //{
-            //    dirInfo.Create();
-            //}
-            //foreach (IFormFile file in uploadImages)
-            //{
-            //    if (file.Length > 0)
-            //    {
-            //        string filePath = Path.Combine(directoryPath, file.FileName);
-            //        using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-            //        {
-            //            await file.CopyToAsync(fileStream);
-            //        }
-            //    }
-            //}
-
+            
             string directoryPathSmall = Path.Combine(directoryPath, "small");
             CopyFiles(directoryPathSmall, uploadImagesSmall);
-            //dirInfo = new DirectoryInfo(directoryPathSmall);
-            //if (!dirInfo.Exists)
-            //{
-            //    dirInfo.Create();
-            //}
-            //foreach (IFormFile file in uploadImagesSmall)
-            //{
-            //    if (file.Length > 0)
-            //    {
-            //        string filePath = Path.Combine(directoryPathSmall, file.FileName);
-            //        using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-            //        {
-            //            await file.CopyToAsync(fileStream);
-            //        }
-            //    }
-            //}
+
+           
+            string imagePathRel = String.Concat("~/img/prod-img/", id.ToString());
+            SaveImagesInModel(product.Images, imagePathRel, uploadImages);
+
+            imagePathRel = String.Concat("~/img/prod-img/", product.ProductId.ToString(), "/small");
+            SaveImagesInModel(product.ImagesSmall, imagePathRel, uploadImagesSmall);
 
             if (ModelState.IsValid)
             {
@@ -222,6 +192,21 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
                     {
                         await file.CopyToAsync(fileStream);
                     }
+                }
+            }
+        }
+
+        private void SaveImagesInModel(List<string> imageListOfProduct, string imagePathRel, IList<IFormFile> uploadImages)
+        {
+           // imageListOfProduct.Clear();
+
+
+            foreach (IFormFile file in uploadImages)
+            {
+                if (file.Length > 0)
+                {
+                    imageListOfProduct.Add(imagePathRel + "/" + file.FileName);
+                  
                 }
             }
         }

@@ -1,43 +1,18 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using TMS.NET06.Parfume.Manager.MVC.Data.Models;
 
 namespace TMS.NET06.Parfume.Manager.MVC.App_Code
 {
     public static class MyHelper
     {
-    //    public static string GenderUrl(this IHtmlHelper html,  Gender gender, Gender? selectedgender = null)
-    //    {
-    //        var queryString = html.ViewContext.HttpContext.Request.QueryString;
-
-    //        //return html.ViewContext.HttpContext.Request.Path + queryString + 
-    //        //    (queryString.ToString() == ""? "?": "&") + "gender=" + gender.ToString();
-
-    //        string res = queryString.ToString();
-            
-    //        if (selectedgender!=null)
-    //        res = queryString.Add("gender", gender.ToString()).ToString();
-
-    //        return res;
-    //    }
-
-         public static string GenderUrl(this IHtmlHelper html,  Gender? gender)
+        public static string GenderUrl(this IHtmlHelper html, Gender? gender)
         {
             var queryString = html.ViewContext.HttpContext.Request.QueryString;
-
-            //return html.ViewContext.HttpContext.Request.Path + queryString + 
-            //    (queryString.ToString() == ""? "?": "&") + "gender=" + gender.ToString();
 
             string res;
             string path = html.ViewContext.HttpContext.Request.Path;
             var request = html.ViewContext.HttpContext.Request;
-            //if (request.Query.Keys.Contains("gender")) 
-            //    ;
-            //var queryStringValues = new List<string>();
-            //foreach (var key in request.Query.Keys)
-            //{ }
-            //string.Join("&", queryStringValues);
+
             string s_queryString = queryString.ToString().Replace("?", "");
             string[] s_params = s_queryString.Split("&");
             bool ex = false;
@@ -46,14 +21,16 @@ namespace TMS.NET06.Parfume.Manager.MVC.App_Code
                 var sp = s_params[i];
                 string[] kv = sp.Split("=");
                 if (kv[0] == "gender")
-                { kv[1] = gender.ToString(); 
-                  sp = string.Join("=", kv);
-                  s_params[i] = sp;
-                  ex = true; }
-            } 
+                {
+                    kv[1] = gender.ToString();
+                    sp = string.Join("=", kv);
+                    s_params[i] = sp;
+                    ex = true;
+                }
+            }
 
             if (!(ex))
-            res = path + queryString.Add("gender", gender.ToString()).ToString();
+                res = path + queryString.Add("gender", gender.ToString()).ToString();
             else res = path + "?" + string.Join("&", s_params);
 
 
@@ -64,18 +41,11 @@ namespace TMS.NET06.Parfume.Manager.MVC.App_Code
         {
             var queryString = html.ViewContext.HttpContext.Request.QueryString;
 
-            //return html.ViewContext.HttpContext.Request.Path + queryString + 
-            //    (queryString.ToString() == ""? "?": "&") + "gender=" + gender.ToString();
 
             string res;
             string path = html.ViewContext.HttpContext.Request.Path;
             var request = html.ViewContext.HttpContext.Request;
-            //if (request.Query.Keys.Contains("gender")) 
-            //    ;
-            //var queryStringValues = new List<string>();
-            //foreach (var key in request.Query.Keys)
-            //{ }
-            //string.Join("&", queryStringValues);
+
             string s_queryString = queryString.ToString().Replace("?", "");
             string[] s_params = s_queryString.Split("&");
             bool ex = false;
@@ -99,6 +69,25 @@ namespace TMS.NET06.Parfume.Manager.MVC.App_Code
 
             return res;
         }
+
+        public static string ClassMainMenu(this IHtmlHelper html, string name)
+        {
+            string res;
+            string path = html.ViewContext.HttpContext.Request.Path;
+         
+            string path1 = "/";
+            string path2 = "/home";
+            if ((name == "home" && path.ToLower().Equals(path1))|| (name == "home" && path.ToLower().Equals(path2)))
+                res = "active";
+            else
+            {
+                if (path.ToLower().Contains(name)&&name!="home")
+                    res = "active";
+                else res = "";
+            }
+
+            return res;
+        }
     }
-  }
+}
 

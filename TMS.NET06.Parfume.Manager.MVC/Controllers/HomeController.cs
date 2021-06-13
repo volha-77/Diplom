@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using TMS.NET06.Parfume.Manager.MVC.Data;
 using TMS.NET06.Parfume.Manager.MVC.Data.Models;
@@ -27,21 +26,42 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
             _env = env;
         }
 
-        //public IActionResult Index()
-        //{
-        //    return View(db.Brand.ToList());
-        //}
-
         public IActionResult Index()
         {
-            //return View(await db.Brand.ToListAsync());
+
+            int lastId = db.Brands.OrderBy(b => b.BrandId).Last().BrandId;
+            Random rnd = new Random();
+
+            List<int> idList = new List<int>();
+
+            int quantityOfBrands = Math.Min(9, lastId);
+          
+            while (idList.Count < quantityOfBrands)
+            {
+                int nextId = rnd.Next(1, quantityOfBrands + 1);
+                if (!idList.Contains(nextId))
+                {
+                    idList.Add(nextId);
+                   
+                }
+            }
+            
+            List<Brand> brands = db.Brands.Where(b => idList.Contains(b.BrandId)).ToList();
+
             var homeViewModel = new HomeViewModel();
-            var homeBlockViewModel = new HomeBlockViewModel();
-            homeBlockViewModel.Title = "Chanel";
-            homeBlockViewModel.PriceFrom = 180;
-            homeBlockViewModel.ImageUrl = "~/img/bg-img/1.jpg";
-            homeBlockViewModel.PageUrl = "/";
-            homeViewModel.HomeBlocks.Add(homeBlockViewModel);
+            foreach (var brand in brands)
+            {
+                var homeBlockViewModel = new HomeBlockViewModel();
+                homeBlockViewModel.Title = brand.Name;
+
+                var products = db.Products.Where(p => p.BrandId == brand.BrandId).OrderBy(p => p.Price).ToList();
+                if (products.Count > 0)
+                homeBlockViewModel.PriceFrom = products[0].Price;
+                homeBlockViewModel.ImageUrl = "~/img/bg-img/" + brand.BrandId.ToString() + ".jpg";
+                homeBlockViewModel.PageUrl = "/";
+                homeViewModel.HomeBlocks.Add(homeBlockViewModel);
+            }
+
             return View(homeViewModel);
         }
 
@@ -57,18 +77,30 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
             productViewModel.Volume = product.Volume;
             productViewModel.PageUrl = "/";
 
-            string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", id.ToString());
-            string imagePathRel = String.Concat("~/img/prod-img/", id.ToString());
+            //string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", id.ToString());
+            //string imagePathRel = String.Concat("~/img/prod-img/", id.ToString());
 
-            if (Directory.Exists(directoryPath))
+            //if (Directory.Exists(directoryPath))
+            //{
+            //    string[] files = Directory.GetFiles(directoryPath);
+
+            //    foreach (string s in files)
+            //    {
+            //        string fileNameShort = s.Replace(directoryPath + "\\", "");
+            //        productViewModel.ImageUrls.Add(imagePathRel + "/" + fileNameShort);
+            //    }
+            //}
+
+            if (product.Images != null)
             {
-                string[] files = Directory.GetFiles(directoryPath);
-               
-                foreach (string s in files)
+                foreach (var imagePathRel in product.Images)
                 {
-                    string fileNameShort = s.Replace(directoryPath + "\\", "");
-                   productViewModel.ImageUrls.Add(imagePathRel + "/" + fileNameShort);
+                    productViewModel.ImageUrls.Add(imagePathRel);
                 }
+            }
+            if (productViewModel.ImageUrls.Count == 0)
+            {
+                productViewModel.ImageUrls.Add("~/img/filenotfound.png");
             }
 
             //productViewModel.ImageUrls.Add("~/img/product-img/pro-big-1.jpg");
@@ -111,32 +143,22 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
             }
 
 
-          //  string webRootPath = _env.WebRootPath;
-
-          //  string imagePath = "~/img/product-img/product";
-
-            //string imagePath1 = "/img/product-img/product";
-            //var path = Path.Combine(_env.WebRootPath, imagePath1);
-
-
-            //string p = HttpContext.Current.Server.MapPath("/UploadedFiles");
-
             int selectedQuantityOnPage = request.SelectedQuantityOnPage;
             int selectedSort = request.SelectedSort;
             int selectedPage = request.SelectedPage;
 
             List<Product> products = null;
-          
+
             if (request.SelectedBrands != null && request.SelectedGender != null)
                 products = db.Products.Where(p => (request.SelectedBrands.Contains(p.BrandId.ToString())
                 && p.Gender == request.SelectedGender)
                 && p.Price <= request.PriceMax && p.Price >= request.PriceMin).ToList();
 
             else if (request.SelectedBrands != null && request.SelectedGender == null)
-             
-                    products = db.Products.Where(p => request.SelectedBrands.Contains(p.BrandId.ToString())
-                 && p.Price <= request.PriceMax && p.Price >= request.PriceMin).ToList();
-                
+
+                products = db.Products.Where(p => request.SelectedBrands.Contains(p.BrandId.ToString())
+             && p.Price <= request.PriceMax && p.Price >= request.PriceMin).ToList();
+
             else if (request.SelectedBrands == null && request.SelectedGender != null)
                 products = db.Products.Where(p => (p.Gender == request.SelectedGender)
                  && p.Price <= request.PriceMax && p.Price >= request.PriceMin).ToList();
@@ -146,7 +168,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
             shopViewModel.QuantityOfPages = (int)Math.Ceiling(products.Count / (double)selectedQuantityOnPage);
 
             shopViewModel.TotalProductsCount = products.Count;
-           
+
             Random rnd = new Random();
             foreach (var product in products)
             {
@@ -155,32 +177,54 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
                 shortProductViewModel.Name = product.Name;
                 shortProductViewModel.Price = (int)product.Price;
 
-                string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", product.ProductId.ToString(), "small");
-                string imagePathRel = String.Concat("~/img/prod-img/", product.ProductId.ToString(), "/small");
+                //string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", product.ProductId.ToString(), "small");
+                //string imagePathRel = String.Concat("~/img/prod-img/", product.ProductId.ToString(), "/small");
 
-                if (Directory.Exists(directoryPath))
+                //if (Directory.Exists(directoryPath))
+                //{
+                //    string[] files = Directory.GetFiles(directoryPath);
+                //    string fileNameShort;
+                //    if (files.Length > 0)
+                //    {
+                //        fileNameShort = files[0].Replace(directoryPath + "\\", "");
+                //        shortProductViewModel.ImageUrl = imagePathRel + "/" + fileNameShort;
+                //        if (files.Length > 1)
+                //        {
+                //            fileNameShort = files[1].Replace(directoryPath + "\\", "");
+                //            shortProductViewModel.HoverImageUrl = imagePathRel + "/" + fileNameShort;
+
+                //        }
+                //        else shortProductViewModel.HoverImageUrl = shortProductViewModel.ImageUrl;
+                //    }
+                //    else
+                //    { shortProductViewModel.ImageUrl = "~/img/prod-img/filenotfound.png";
+                //      shortProductViewModel.HoverImageUrl = "~/img/prod-img/filenotfound.png";
+                //    }
+
+                //}
+
+                if (product.ImagesSmall != null)
                 {
-                    string[] files = Directory.GetFiles(directoryPath);
-                    string fileNameShort;
-                    if (files.Length > 0)
+                    if (product.ImagesSmall.Count > 0)
                     {
-                        fileNameShort = files[0].Replace(directoryPath + "\\", "");
-                        shortProductViewModel.ImageUrl = imagePathRel + "/" + fileNameShort;
-                        if (files.Length > 1)
+                        shortProductViewModel.ImageUrl = product.ImagesSmall[0];
+                        if (product.ImagesSmall.Count > 1)
                         {
-                            fileNameShort = files[1].Replace(directoryPath + "\\", "");
-                            shortProductViewModel.HoverImageUrl = imagePathRel + "/" + fileNameShort;
-
+                            shortProductViewModel.HoverImageUrl = product.ImagesSmall[1];
                         }
                         else shortProductViewModel.HoverImageUrl = shortProductViewModel.ImageUrl;
                     }
                     else
-                    { shortProductViewModel.ImageUrl = "~/img/prod-img/product1";
-                      shortProductViewModel.HoverImageUrl = "~/img/prod-img/product1";
+                    {
+                        shortProductViewModel.ImageUrl = "~/img/prod-img/filenotfound.png";
+                        shortProductViewModel.HoverImageUrl = "~/img/prod-img/filenotfound.png";
                     }
-                    
                 }
-
+                else
+                {
+                    shortProductViewModel.ImageUrl = "~/img/prod-img/filenotfound.png";
+                    shortProductViewModel.HoverImageUrl = "~/img/prod-img/filenotfound.png";
+                }
                 shortProductViewModel.Rating = rnd.Next(1, 5);
                 shortProductViewModel.ProductId = product.ProductId;
 
@@ -201,12 +245,12 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
 
                 shopViewModel.Products = shopViewModel.Products.OrderBy(p => p.Price).ToList();
             }
-             
+
             else if (selectedSort == 2)
             {
                 shopViewModel.Products = shopViewModel.Products.OrderByDescending(p => p.Price).ToList();
             }
-           
+
             else if (selectedSort == 3)
             {
                 shopViewModel.Products = shopViewModel.Products.OrderByDescending(p => p.Rating).ToList();

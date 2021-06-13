@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TMS.NET06.Parfume.Manager.MVC.Data.Models
 {
     public class Product
     {
+        public Product()
+        {
+            if (Images == null)
+                Images = new List<string>();
+
+            if (ImagesSmall == null)
+                ImagesSmall = new List<string>();
+        }
+
         public int ProductId { get; set; }
 
         public string Name { get; set; }
@@ -18,12 +24,18 @@ namespace TMS.NET06.Parfume.Manager.MVC.Data.Models
         public Gender? Gender { get; set; }
 
         public int Volume { get; set; }
-        public string[] Images { get; set; }
+        //public string[] Images { get; set; }
 
-        public string[] ImagesSmall { get; set; }
+        //public string[] ImagesSmall { get; set; }
+
+        public List<string> Images { get; set; }
+
+        public List<string> ImagesSmall { get; set; }
+
+
     }
 
-    public enum Gender 
+    public enum Gender
     {
         men = 1,
         women
