@@ -15,7 +15,7 @@
                         <ol class="breadcrumb mt-50">
                             @foreach (var nodeUrl in Model.ParentsNodeUrls)
                             {
-                                <li class="breadcrumb-item"><a href="#">@nodeUrl</a></li>
+                                <li class="breadcrumb-item"><a href="@nodeUrl.Value">@nodeUrl.Key</a></li>
                             }
                             <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
                         </ol>
@@ -73,9 +73,9 @@
                                         <i class="fa fa-star" aria-hidden="true"></i>
                                   }
                                 </div>
-                                <div class="review">
+                                @*<div class="review">
                                     <a href="#">Write A Review</a>
-                                </div>
+                                </div>*@
                             </div>
                             <!-- Avaiable -->
                             <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p>

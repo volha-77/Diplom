@@ -97,7 +97,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,BrandId,Gender,Volume")] Product product, [Bind] IList<IFormFile> uploadImages, [Bind] IList<IFormFile> uploadImagesSmall)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,BrandId,Gender,Volume,Overview")] Product product, [Bind] IList<IFormFile> uploadImages, [Bind] IList<IFormFile> uploadImagesSmall)
         {
             if (id != product.ProductId)
             {

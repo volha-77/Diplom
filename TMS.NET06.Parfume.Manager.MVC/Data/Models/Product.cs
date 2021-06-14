@@ -24,9 +24,8 @@ namespace TMS.NET06.Parfume.Manager.MVC.Data.Models
         public Gender? Gender { get; set; }
 
         public int Volume { get; set; }
-        //public string[] Images { get; set; }
 
-        //public string[] ImagesSmall { get; set; }
+        public string Overview { get; set; }
 
         public List<string> Images { get; set; }
 

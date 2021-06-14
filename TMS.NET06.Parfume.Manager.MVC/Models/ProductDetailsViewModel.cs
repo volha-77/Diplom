@@ -12,13 +12,15 @@ namespace TMS.NET06.Parfume.Manager.MVC.Models
 
         public int Volume { get; set; }
         public string  PageUrl { get; set; }
+
+        public string Overview { get; set; }
         public IList<string> ImageUrls { get; set; }
 
         public IList<string> ImageCarousel { get; set; }
 
-        public IList<string> ParentsNodeUrls { get; set; }
+        // public IList<string> ParentsNodeUrls { get; set; }
 
-        public string Overview { get; set; }
+        public Dictionary<string, string> ParentsNodeUrls { get; set; }
 
         public string ReviewUrl { get; set; }
 
@@ -29,7 +31,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Models
         public ProductDetailsViewModel()
         {
             ImageUrls = new List<string>();
-            ParentsNodeUrls = new List<string>();
+            ParentsNodeUrls = new Dictionary<string, string>();
             ImageCarousel = new List<string>();
             
         }

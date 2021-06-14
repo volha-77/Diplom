@@ -41,8 +41,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
                 int nextId = rnd.Next(1, quantityOfBrands + 1);
                 if (!idList.Contains(nextId))
                 {
-                    idList.Add(nextId);
-                   
+                    idList.Add(nextId);   
                 }
             }
             
@@ -76,7 +75,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
             productViewModel.Name = product.Name;
             productViewModel.Price = product.Price;
             productViewModel.Volume = product.Volume;
-            productViewModel.PageUrl = "/";
+            productViewModel.PageUrl = "/Home/ProductDetails/" + product.ProductId.ToString();
 
             //string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", id.ToString());
             //string imagePathRel = String.Concat("~/img/prod-img/", id.ToString());
@@ -115,11 +114,16 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
                 productViewModel.ImageCarousel.Add(imageStr);
             }
 
-            productViewModel.ParentsNodeUrls.Add(product.Gender.ToString());
-            productViewModel.ParentsNodeUrls.Add(product.Brand.Name);
-            // productViewModel.RefPath.Add("Chanel #5");
+            //productViewModel.ParentsNodeUrls.Add(product.Gender.ToString());
+            //productViewModel.ParentsNodeUrls.Add(product.Brand.Name);
 
-            productViewModel.Overview = "Духи " + product.Name + " заслуженно носят звание лучших в мире. Они проверены временем, но не подвластны ему. Его называют таинственным, роскошным. Его ощущение на себе повышает настроение, он нравится и мужчинам. Большинство людей говорит о нем, как о приятном, но слегка терпком аромате, который слышно на протяжении 3 – 6 часов, что зависит и от погоды, от того из какого материала одежда и личного восприятия человека. Однозначно то, что они пахнут женщиной, о чем говорила и Коко Шанель.";
+            productViewModel.ParentsNodeUrls.Add("Home", "/");
+            productViewModel.ParentsNodeUrls.Add(product.Gender.ToString(), "/Home/Shop?&gender=" + product.Gender.ToString());
+            productViewModel.ParentsNodeUrls.Add(product.Brand.Name, "/Home/Shop?&brand=" + product.BrandId.ToString());
+
+            productViewModel.Overview = product.Overview;
+
+            //productViewModel.Overview = "Духи " + product.Name + " заслуженно носят звание лучших в мире. Они проверены временем, но не подвластны ему. Его называют таинственным, роскошным. Его ощущение на себе повышает настроение, он нравится и мужчинам. Большинство людей говорит о нем, как о приятном, но слегка терпком аромате, который слышно на протяжении 3 – 6 часов, что зависит и от погоды, от того из какого материала одежда и личного восприятия человека. Однозначно то, что они пахнут женщиной, о чем говорила и Коко Шанель.";
             productViewModel.Rating = 5;
             productViewModel.Avaibility = true;
             productViewModel.ReviewUrl = "/";
