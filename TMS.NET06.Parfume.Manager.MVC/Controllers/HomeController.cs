@@ -58,7 +58,8 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
                 if (products.Count > 0)
                 homeBlockViewModel.PriceFrom = products[0].Price;
                 homeBlockViewModel.ImageUrl = brand.FrontImage ?? brand.Logo;
-                homeBlockViewModel.PageUrl = "/";
+                homeBlockViewModel.PageUrl =
+                    "/Home/Shop?&brand=" + brand.BrandId.ToString();// "/";
                 homeViewModel.HomeBlocks.Add(homeBlockViewModel);
             }
 
