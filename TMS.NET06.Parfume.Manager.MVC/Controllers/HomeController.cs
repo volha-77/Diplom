@@ -28,8 +28,11 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
 
         public IActionResult Index()
         {
+            var brands = db.Brands.ToList();
 
-            int lastId = db.Brands.OrderBy(b => b.BrandId).Last().BrandId;
+            if (brands.Count == 0) { return View(new HomeViewModel()); }
+
+            int lastId = brands.OrderBy(b => b.BrandId).Last().BrandId;
             Random rnd = new Random();
 
             List<int> idList = new List<int>();
@@ -45,10 +48,10 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
                 }
             }
             
-            List<Brand> brands = db.Brands.Where(b => idList.Contains(b.BrandId)).ToList();
+            List<Brand> brands9 = db.Brands.Where(b => idList.Contains(b.BrandId)).ToList();
 
             var homeViewModel = new HomeViewModel();
-            foreach (var brand in brands)
+            foreach (var brand in brands9)
             {
                 var homeBlockViewModel = new HomeBlockViewModel();
                 homeBlockViewModel.Title = brand.Name;
@@ -67,6 +70,9 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
 
         public IActionResult ProductDetails(int id)
         {
+            var products = db.Products.ToList();
+            if (products.Count == 0) { return View(new ProductDetailsViewModel()); }
+
             Product product = db.Products.Where(p => p.ProductId == id).First();
             product.Brand = db.Brands.Where(b => b.BrandId == product.BrandId).First();
 
@@ -136,6 +142,8 @@ namespace TMS.NET06.Parfume.Manager.MVC.Controllers
             var shopViewModel = new ShopViewModel();
 
             var brands = db.Brands.ToList();
+
+            if (brands.Count == 0) { return View(shopViewModel); }
 
             foreach (var brand in brands)
             {
