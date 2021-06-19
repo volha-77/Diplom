@@ -17,10 +17,11 @@
             <!--  Catagories  -->
             <div class="catagories-menu">
                 <ul>
-                    <li class="@(Model.SelectedGender==null ? "active":"")"><a href="@MyHelper.GenderUrl(Html, null)">Men&Women</a></li>
-                    <li class="@(Model.SelectedGender==Gender.men ? "active":"")"><a href="@MyHelper.GenderUrl(Html, Gender.men)">Men</a></li>
-                    <li class="@(Model.SelectedGender==Gender.women ? "active":"")"><a href="@MyHelper.GenderUrl(Html, Gender.women)">Women</a></li>
+                    <li class="@(Model.SelectedGender==null ? "active":"")"><a href="@MyHelper.MakeUrl(Html, null, "gender")">Men&Women</a></li>
+                    <li class="@(Model.SelectedGender==Gender.men ? "active":"")"><a href="@MyHelper.MakeUrl(Html, Gender.men, "gender")">Men</a></li>
+                    <li class="@(Model.SelectedGender==Gender.women ? "active":"")"><a href="@MyHelper.MakeUrl(Html, Gender.women, "gender")">Women</a></li>
                 </ul>
+
 
                 <input type="hidden" name="gender" id="gender" value="@Model.SelectedGender">
             </div>
@@ -125,21 +126,19 @@
                         </div>
                         <div class="view-product d-flex align-items-center">
                             <p>View</p>
-                            @*<form action="@Url.Action()" method="get">*@
                             <select name="selectedquantity" onchange="submitForm();">
-                                    @foreach (var q in Model.QuantityOnPage)
+                                @foreach (var q in Model.QuantityOnPage)
+                                {
+                                    @if (q == Model.SelectedQuantityOnPage)
                                     {
-                                        @if (q == Model.SelectedQuantityOnPage)
-                                        {
-                                            <option value="@q" selected>@q</option>
-                                           }
-                                        else
-                                        {
-                                            <option value="@q">@q</option>
-                                        }
+                                        <option value="@q" selected>@q</option>
                                     }
-                                </select>
-                            @*</form>*@
+                                    else
+                                    {
+                                        <option value="@q">@q</option>
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -166,7 +165,6 @@
                             <div class="product-meta-data">
                                 <div class="line"></div>
                                 <p class="product-price">$@product.Price.ToString()</p>
-                                @*<a href="@product.ProductDetailsUrl">*@
                                 <a href="@Url.Action("ProductDetails", "Home", new {id = product.ProductId})">
                                     <h6>@product.Name</h6>
                                 </a>
@@ -194,29 +192,24 @@
                 <!-- Pagination -->
                 <nav aria-label="navigation">
                     <ul class="pagination justify-content-end mt-50">
-
                         @for (int i = 1; i <= Model.QuantityOfPages; i++)
                         {
                             @if (i == Model.SelectedPage)
                             {
-                                <li class="page-item active"><a href="@MyHelper.PageUrl(Html, i)" class="page-link">@String.Format("{0:d2}", i).</a></li>
+                                <li class="page-item active"><a href="@MyHelper.MakeUrl(Html, i, "page")" class="page-link">@String.Format("{0:d2}", i).</a></li>
 
                             }
                             else
                             {
-                                <li class="page-item"><a href="@MyHelper.PageUrl(Html, i)" class="page-link">@String.Format("{0:d2}", i).</a></li>
+                                <li class="page-item"><a href="@MyHelper.MakeUrl(Html, i, "page")" class="page-link">@String.Format("{0:d2}", i).</a></li>
                             }
-
-                            @*<li class="page-item" + @(Model.SelectedPage==i ? " active":"")><a href="@MyHelper.PageUrl(Html, i)" class="page-link">@String.Format("{0:d2}", i).</a></li>*@
                         }
-
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
 </div>
-@*</form>*@
 
 <script>
     function submitForm() {
