@@ -97,7 +97,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,BrandId,Gender,Volume,Overview")] Product product, [Bind] IList<IFormFile> uploadImages, [Bind] IList<IFormFile> uploadImagesSmall)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price,BrandId,Gender,Volume,Overview")] Product product, [Bind] IList<IFormFile> uploadImages, [Bind] IList<IFormFile> uploadImagesSmall, [Bind] List<string> imagesSmall, [Bind] List<string> images)
         {
             if (id != product.ProductId)
             {
@@ -112,10 +112,10 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
 
 
             string imagePathRel = String.Concat("~/img/prod-img/", id.ToString());
-            SaveImagesInModel(product.Images, imagePathRel, uploadImages);
+            SaveImagesInModel(product.Images, imagePathRel, uploadImages, images);
 
             imagePathRel = String.Concat("~/img/prod-img/", product.ProductId.ToString(), "/small");
-            SaveImagesInModel(product.ImagesSmall, imagePathRel, uploadImagesSmall);
+            SaveImagesInModel(product.ImagesSmall, imagePathRel, uploadImagesSmall, imagesSmall);
 
             if (ModelState.IsValid)
             {
@@ -200,10 +200,18 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
             }
         }
 
-        private void SaveImagesInModel(List<string> imageListOfProduct, string imagePathRel, IList<IFormFile> uploadImages)
+        private void SaveImagesInModel(List<string> imageListOfProduct, string imagePathRel, IList<IFormFile> uploadImages, List<string> images)
         {
-            // imageListOfProduct.Clear();
-
+            imageListOfProduct.Clear();
+            //firt of all save images that were in model earlier
+            if (images!=null)
+            {
+                foreach (string imagepath in images)
+                {if (imagepath != null)
+                        if (imagepath.Length!=0) imageListOfProduct.Add(imagepath);
+                } 
+            }
+            //then save new images
             if (uploadImages != null)
             {
                 foreach (IFormFile file in uploadImages)
