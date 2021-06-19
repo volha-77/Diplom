@@ -39,11 +39,33 @@
                 <span asp-validation-for="Volume" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Overview" class="control-label"></label>
+                <textarea asp-for="Overview" class="form-control">@Model.Overview</textarea>
+                <span asp-validation-for="Overview" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              <label class="control-label"><b>product images</b></label>
+                @foreach (var image in Model.Images)
+                {   <input name="images" id="images_@Model.ProductId" value="@image" class="form-control" />
+                    <button id="buttonDelete_@Model.ProductId" onclick="deleteInput(@Model.ProductId);">Удалить</button>
+                    <span class="text-danger"></span>
+                }
+            </div>
+            <div class="form-group">
+                <label class="control-label"><b>product small images</b></label>
+                @foreach (var imagessmall in Model.ImagesSmall)
+                {
+                    <input name="imagesSmall" id="imagesSmall_@Model.ProductId" value="@imagessmall" class="form-control" />
+                    <button id="buttonDeleteSmall_@Model.ProductId" onclick="deleteInputSmall(@Model.ProductId);">Удалить</button>
+                    <span class="text-danger"></span>
+                }
+            </div>
+            @*<div class="form-group">
             <label class="control-label">product images</label>
             @foreach (var image in Model.Images)
             {
                 <input name="images" id="images_@Model.ProductId" value="@image" class="form-control" />
-                <button id="buttonDelete_@Model.ProductId" onclick="deleteInput(@Model.ProductId);">Удалить</button>
+                <button id="buttonDelete_@Model.ProductId" onclick="deleteInput('images_@Model.ProductId', 'buttonDelet_@Model.ProductId');">Удалить</button>
                 <span class="text-danger"></span>
             }
         </div>
@@ -52,39 +74,16 @@
             @foreach (var imagessmall in Model.ImagesSmall)
             {
                 <input name="imagesSmall" id="imagesSmall_@Model.ProductId" value="@imagessmall" class="form-control" />
-                <button id="buttonDeleteSmall_@Model.ProductId" onclick="deleteInputSmall(@Model.ProductId);">Удалить</button>
+                <button id="buttonDeleteSmall_@Model.ProductId" onclick="deleteInputSmall('imagesSmall_@Model.ProductId', 'buttonDeleteSmall_@Model.ProductId');">Удалить</button>
                 <span class="text-danger"></span>
             }
-        </div>
-            @*<div class="form-group">
-                <label class="control-label">product images</label>
-                @foreach (var image in Model.Images)
-                {
-                    <input name="images" id="images_@Model.ProductId" value="@image" class="form-control" />
-                    <button id="buttonDelete_@Model.ProductId" onclick="deleteInput('images_@Model.ProductId', 'buttonDelet_@Model.ProductId');">Удалить</button>
-                    <span class="text-danger"></span>
-                }
-            </div>
+        </div>*@
             <div class="form-group">
-                <label class="control-label">product small images</label>
-                @foreach (var imagessmall in Model.ImagesSmall)
-                {
-                    <input name="imagesSmall" id="imagesSmall_@Model.ProductId" value="@imagessmall" class="form-control" />
-                    <button id="buttonDeleteSmall_@Model.ProductId" onclick="deleteInputSmall('imagesSmall_@Model.ProductId', 'buttonDeleteSmall_@Model.ProductId');">Удалить</button>
-                    <span class="text-danger"></span>
-                }
-            </div>*@
-            <div class="form-group">
-                <label asp-for="Overview" class="control-label"></label>
-                <textarea asp-for="Overview" class="form-control">@Model.Overview</textarea>
-                <span asp-validation-for="Overview" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Pick images to add</label>
+                <label class="control-label"><b>Pick images to add</b></label>
                 <input type="file" class="form-control-file" id="Images" name="uploadImages" multiple>
             </div>
             <div class="form-group">
-                <label class="control-label">Pick small images to add</label>
+                <label class="control-label"><b>Pick small images to add</b></label>
                 <input type="file" class="form-control-file" id="ImagesSmall" name="uploadImagesSmall" multiple>
             </div>
             <div class="form-group">
