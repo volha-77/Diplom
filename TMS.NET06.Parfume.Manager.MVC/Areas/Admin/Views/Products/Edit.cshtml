@@ -44,40 +44,29 @@
                 <span asp-validation-for="Overview" class="text-danger"></span>
             </div>
             <div class="form-group">
-              <label class="control-label"><b>product images</b></label>
-                @foreach (var image in Model.Images)
-                {   <input name="images" id="images_@Model.ProductId" value="@image" class="form-control" />
-                    <button id="buttonDelete_@Model.ProductId" onclick="deleteInput(@Model.ProductId);">Удалить</button>
-                    <span class="text-danger"></span>
+                <label class="control-label"><b>product images</b></label>
+                @{int i = 1;
+                    @foreach (var image in Model.Images)
+                    {<input name="images" id="images_@i" value="@image" class="form-control" />
+                        <button id="buttonDelete_@i" onclick="deleteInput('images_@i', 'buttonDelete_@i');">Удалить</button>
+                        i++;
+                        <span class="text-danger"></span>
+                    }
                 }
             </div>
             <div class="form-group">
                 <label class="control-label"><b>product small images</b></label>
-                @foreach (var imagessmall in Model.ImagesSmall)
-                {
-                    <input name="imagesSmall" id="imagesSmall_@Model.ProductId" value="@imagessmall" class="form-control" />
-                    <button id="buttonDeleteSmall_@Model.ProductId" onclick="deleteInputSmall(@Model.ProductId);">Удалить</button>
-                    <span class="text-danger"></span>
+                @{int j = 1;
+                    @foreach (var imagessmall in Model.ImagesSmall)
+                    {
+                        <input name="imagesSmall" id="imagesSmall_@j" value="@imagessmall" class="form-control" />
+                        <button id="buttonDeleteSmall_@j" onclick="deleteInput('imagesSmall_@j', 'buttonDeleteSmall_@j');">Удалить</button>
+                        j++;
+                        <span class="text-danger"></span>
+                    }
                 }
             </div>
-            @*<div class="form-group">
-            <label class="control-label">product images</label>
-            @foreach (var image in Model.Images)
-            {
-                <input name="images" id="images_@Model.ProductId" value="@image" class="form-control" />
-                <button id="buttonDelete_@Model.ProductId" onclick="deleteInput('images_@Model.ProductId', 'buttonDelet_@Model.ProductId');">Удалить</button>
-                <span class="text-danger"></span>
-            }
-        </div>
-        <div class="form-group">
-            <label class="control-label">product small images</label>
-            @foreach (var imagessmall in Model.ImagesSmall)
-            {
-                <input name="imagesSmall" id="imagesSmall_@Model.ProductId" value="@imagessmall" class="form-control" />
-                <button id="buttonDeleteSmall_@Model.ProductId" onclick="deleteInputSmall('imagesSmall_@Model.ProductId', 'buttonDeleteSmall_@Model.ProductId');">Удалить</button>
-                <span class="text-danger"></span>
-            }
-        </div>*@
+
             <div class="form-group">
                 <label class="control-label"><b>Pick images to add</b></label>
                 <input type="file" class="form-control-file" id="Images" name="uploadImages" multiple>
@@ -98,47 +87,14 @@
 </div>
 
 <script>
-    //function deleteInput(i, isSmallImage)
-    //{
-    //    var el;
-    //    var btn;
-    //    if (isSmallImage!=true) {
-    //        el = document.getElementById("images_" + i);
-    //        btn = document.getElementById("buttonDelete_" + i);
-    //    }
-    //    else {
-    //        el = document.getElementById("imagesSmall_" + i);
-    //        btn = document.getElementById("buttonDeleteSmall_" + i);
-    //    }
+    function deleteInput(inputId, btnId) {
 
-    //    el.remove();
-    //    btn.remove();
-        
-    //}
-
-    function deleteInput(i) {
-        var  el = document.getElementById("images_" + i);
-        var btn = document.getElementById("buttonDelete_" + i);
+        var el = document.getElementById(inputId);
+        var btn = document.getElementById(btnId);
         el.remove();
         btn.remove();
 
     }
-    function deleteInputSmall(i) {
-      var el = document.getElementById("imagesSmall_" + i);
-      var btn = document.getElementById("buttonDeleteSmall_" + i);
-        
-      el.remove();
-      btn.remove();
-
-    }
-    //function deleteInput(inputId, btnId) {
-
-    //    var el = document.getElementById(inputId);
-    //    var btn = document.getElementById(btnId);
-    //    el.remove();
-    //    btn.remove();
-
-    //}
 </script>
 
 @section Scripts {
