@@ -63,14 +63,40 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,Name,Price,BrandId,Gender,Volume,ImageId")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,Name,Price,BrandId,Gender,Volume, Overview")] Product product, [Bind] IList<IFormFile> uploadImages, [Bind] IList<IFormFile> uploadImagesSmall)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+                // return RedirectToAction(nameof(Index));
+            }
+
+            string directoryPath = Path.Combine(_env.WebRootPath, "img", "prod-img", product.ProductId.ToString());
+            CopyFiles(directoryPath, uploadImages);
+
+            string directoryPathSmall = Path.Combine(directoryPath, "small");
+            CopyFiles(directoryPathSmall, uploadImagesSmall);
+
+            string imagePathRel = String.Concat("~/img/prod-img/", product.ProductId.ToString());
+            SaveImagesInModel(product.Images, imagePathRel, uploadImages);
+
+            imagePathRel = String.Concat("~/img/prod-img/", product.ProductId.ToString(), "/small");
+            SaveImagesInModel(product.ImagesSmall, imagePathRel, uploadImagesSmall);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                { }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["BrandId"] = new SelectList(_context.Brands, "BrandId", "Name", product.BrandId);
             return View(product);
         }
@@ -200,16 +226,17 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
             }
         }
 
-        private void SaveImagesInModel(List<string> imageListOfProduct, string imagePathRel, IList<IFormFile> uploadImages, List<string> images)
+        private void SaveImagesInModel(List<string> imageListOfProduct, string imagePathRel, IList<IFormFile> uploadImages = null, List<string> images = null)
         {
             imageListOfProduct.Clear();
             //firt of all save images that were in model earlier
-            if (images!=null)
+            if (images != null)
             {
                 foreach (string imagepath in images)
-                {if (imagepath != null)
-                        if (imagepath.Length!=0) imageListOfProduct.Add(imagepath);
-                } 
+                {
+                    if (imagepath != null)
+                        if (imagepath.Length != 0) imageListOfProduct.Add(imagepath);
+                }
             }
             //then save new images
             if (uploadImages != null)
