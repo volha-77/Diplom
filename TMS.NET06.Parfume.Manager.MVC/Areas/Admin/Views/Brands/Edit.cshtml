@@ -14,16 +14,36 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="BrandId" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label">Имя</label>
+                <label asp-for="Name" class="control-label">Name</label>
                 <input type="text" asp-for="Name" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="Logo" class="control-label">Pick logo</label>
+                <label asp-for="Logo" class="control-label">Logo</label>
+                <input id="Logo" type="text" asp-for="Logo" class="form-control" />
+                @*<button onclick="deleteInputValue('Logo');">X</button>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="FrontImage" class="control-label">FrontImage</label>
+                <input id="frontImage" type="text" asp-for="FrontImage" class="form-control" />
+                @*<button onclick="deleteInputValue('frontImage');">X</button>*@
+            </div>
+            @*<div class="form-group">
+            <label class="control-label"><b>product images</b></label>
+            <input name="images" id="logo" value="@Model.Logo" class="form-control" />
+            <button id="buttonDeleteLogo" onclick="deleteInput('logo', 'buttonDeleteLogo');">Удалить</button>
+        </div>
+        <div class="form-group">
+            <label class="control-label"><b>product images</b></label>
+            <input name="images" id="frontImage" value="@Model.FrontImage" class="form-control" />
+            <button id="buttonDeleteFrontImage" onclick="deleteInput('frontImage', 'buttonDeleteFrontImage');">Удалить</button>
+        </div>*@
+            <div class="form-group">
+                <label class="control-label">Pick logo</label>
                 <input type="file" class="form-control-file" id="Logo" name="uploadLogo">
             </div>
 
             <div class="form-group">
-                <label asp-for="FrontImage" class="control-label">Pick front image</label>
+                <label class="control-label">Pick front image</label>
                 <input type="file" class="form-control-file" id="ImagesSmall" name="uploadFrontImage">
             </div>
             <div class="form-group">
@@ -36,6 +56,14 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+@*<script>
+    function deleteInputValue(inputId) {
+
+        var el = document.getElementById(inputId);
+        el.value = "";
+       }
+</script>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

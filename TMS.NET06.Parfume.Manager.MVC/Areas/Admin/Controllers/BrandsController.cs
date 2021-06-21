@@ -57,14 +57,23 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Brand brand)//([Bind("BrandId")] Brand brand)
+        public async Task<IActionResult> Create(Brand brand, [Bind] IFormFile uploadLogo, [Bind] IFormFile uploadFrontImage)
         {
+            string directoryPath = Path.Combine(_env.WebRootPath, "img", "brand-img");
+            CopyFiles(directoryPath, uploadLogo);
+            CopyFiles(directoryPath, uploadFrontImage);
+
+            string imagePathRel = "~/img/brand-img";
+            SaveImagesInModel(brand, imagePathRel, uploadLogo);
+            SaveImagesInModel(brand, imagePathRel, uploadFrontImage, false);
+
             if (ModelState.IsValid)
             {
                 _context.Add(brand);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(brand);
         }
 
@@ -89,7 +98,7 @@ namespace TMS.NET06.Parfume.Manager.MVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Brand brand, [Bind] IFormFile uploadLogo, [Bind] IFormFile uploadFrontImage) //[Bind("BrandId")] Brand brand)
+        public async Task<IActionResult> Edit(int id, Brand brand, [Bind] IFormFile uploadLogo, [Bind] IFormFile uploadFrontImage) 
         {
             if (id != brand.BrandId)
             {
